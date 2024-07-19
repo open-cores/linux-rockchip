@@ -10945,6 +10945,10 @@ rtl8125_get_mac_address(struct net_device *dev)
         }
 
         if (!is_valid_ether_addr(mac_addr)) {
+                eth_platform_get_mac_address(tp_to_dev(tp), mac_addr);
+        }
+
+        if (!is_valid_ether_addr(mac_addr)) {
                 netif_err(tp, probe, dev, "Invalid ether addr %pM\n",
                           mac_addr);
                 eth_random_addr(mac_addr);
@@ -12699,12 +12703,12 @@ rtl8125_init_one(struct pci_dev *pdev,
 #if LINUX_VERSION_CODE < KERNEL_VERSION(3,0,0)
                 tp->cp_cmd |= RxChkSum;
 #else
-                //dev->features |= NETIF_F_RXCSUM;
+                dev->features |= NETIF_F_RXCSUM;
                 dev->hw_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_TSO |
                                    NETIF_F_RXCSUM | NETIF_F_HW_VLAN_TX | NETIF_F_HW_VLAN_RX;
                 dev->vlan_features = NETIF_F_SG | NETIF_F_IP_CSUM | NETIF_F_TSO |
                                      NETIF_F_HIGHDMA;
-                dev->features |= dev->hw_features;
+               // dev->features |= dev->hw_features;
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
                 dev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
 #endif //LINUX_VERSION_CODE >= KERNEL_VERSION(3,15,0)
