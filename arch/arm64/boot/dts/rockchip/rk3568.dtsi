@@ -127,7 +127,6 @@
 		mbist-vmin = <825000 900000 950000>;
 		nvmem-cells = <&cpu_leakage>, <&core_pvtm>, <&mbist_vmin>, <&cpu_opp_info>;
 		nvmem-cell-names = "leakage", "pvtm", "mbist-vmin", "opp-info";
-		rockchip,max-volt = <1150000>;
 		rockchip,pvtm-voltage-sel = <
 			0        84000   0
 			84001    87000   1
@@ -197,18 +196,18 @@
 			opp-hz = /bits/ 64 <1800000000>;
 			opp-microvolt = <1150000 1150000 1150000>;
 			opp-microvolt-L0 = <1150000 1150000 1150000>;
-			opp-microvolt-L1 = <1100000 1100000 1150000>;
-			opp-microvolt-L2 = <1075000 1075000 1150000>;
-			opp-microvolt-L3 = <1050000 1050000 1150000>;
+			opp-microvolt-L1 = <1150000 1150000 1150000>;
+			opp-microvolt-L2 = <1150000 1150000 1150000>;
+			opp-microvolt-L3 = <1150000 1150000 1150000>;
 			clock-latency-ns = <40000>;
 		};
 		opp-1992000000 {
 			opp-hz = /bits/ 64 <1992000000>;
-			opp-microvolt = <1150000 1150000 1150000>;
-			opp-microvolt-L0 = <1150000 1150000 1150000>;
-			opp-microvolt-L1 = <1150000 1150000 1150000>;
-			opp-microvolt-L2 = <1125000 1125000 1150000>;
-			opp-microvolt-L3 = <1100000 1100000 1150000>;
+			opp-microvolt = <1250000 1250000 1250000>;
+			opp-microvolt-L0 = <1250000 1250000 1250000>;
+			opp-microvolt-L1 = <1250000 1250000 1250000>;
+			opp-microvolt-L2 = <1250000 1250000 1250000>;
+			opp-microvolt-L3 = <1250000 1250000 1250000>;
 			clock-latency-ns = <40000>;
 		};
 	};
