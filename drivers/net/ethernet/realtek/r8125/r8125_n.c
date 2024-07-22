@@ -48,6 +48,7 @@
 #include <linux/interrupt.h>
 #include <linux/in.h>
 #include <linux/ip.h>
+#include <linux/soc/rockchip/rk_vendor_storage.h>
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(2,6,22)
 #include <linux/ipv6.h>
 #include <net/ip6_checksum.h>
@@ -10928,8 +10929,9 @@ static int
 rtl8125_get_mac_address(struct net_device *dev)
 {
         struct rtl8125_private *tp = netdev_priv(dev);
-        int i;
+        int i,id,ret;
         u8 mac_addr[MAC_ADDR_LEN];
+        unsigned char ethaddr[ETH_ALEN * 2] = {0};
 
         for (i = 0; i < MAC_ADDR_LEN; i++)
                 mac_addr[i] = RTL_R8(tp, MAC0 + i);
@@ -10944,10 +10946,32 @@ rtl8125_get_mac_address(struct net_device *dev)
                 *(u16*)&mac_addr[4] = RTL_R16(tp, BACKUP_ADDR1_8125);
         }
 
-        if (!is_valid_ether_addr(mac_addr)) {
-                eth_platform_get_mac_address(tp_to_dev(tp), mac_addr);
-        }
+        if(strcmp(pci_name(tp->pci_dev),"0002:21:00.0")==0) id=0;
+                               else id=1;
 
+        if (!is_valid_ether_addr(mac_addr)) {
+                           ret = rk_vendor_read(LAN_MAC_ID, ethaddr, ETH_ALEN * 2);
+	if (ret <= 0 ||!is_valid_ether_addr(&ethaddr[id * ETH_ALEN])) {
+		 netif_err(tp, probe, dev, "%s: rk_vendor_read eth mac address failed (%d)\n",
+			__func__, ret);
+		eth_random_addr(&ethaddr[id * ETH_ALEN]);
+                                memcpy(mac_addr, &ethaddr[id * ETH_ALEN], ETH_ALEN);
+		 netif_err(tp, probe, dev, "%s: generate random eth mac address: %pM\n", __func__, mac_addr);
+
+		ret = rk_vendor_write(LAN_MAC_ID, ethaddr, ETH_ALEN * 2);
+		if (ret != 0)
+			 netif_err(tp, probe, dev, "%s: rk_vendor_write eth mac address failed (%d)\n",
+				__func__, ret);
+
+		ret = rk_vendor_read(LAN_MAC_ID, ethaddr, ETH_ALEN * 2);
+		if (ret != ETH_ALEN * 2)
+			 netif_err(tp, probe, dev, "%s: id: %d rk_vendor_read eth mac address failed (%d)\n",
+				__func__, id, ret);       
+ }
+else {
+		memcpy(mac_addr, &ethaddr[id * ETH_ALEN], ETH_ALEN);
+	}
+}
         if (!is_valid_ether_addr(mac_addr)) {
                 netif_err(tp, probe, dev, "Invalid ether addr %pM\n",
                           mac_addr);
