@@ -12802,7 +12802,11 @@ rtl8125_init_one(struct pci_dev *pdev,
         rtl8125_tally_counter_clear(tp);
 
         pci_set_drvdata(pdev, dev);
-
+printk("rll: _%s_ %d 1 pdev-name is %s\n", __func__, __LINE__, dev->name);
+        if(strcmp(pci_name(tp->pci_dev),"0002:21:00.0")==0) 
+                                    strcpy(dev->name, "eth0"); //add by rll
+               else            strcpy(dev->name, "eth1"); //add by rll
+printk("rll: _%s_ %d 2 pdev-name is %s\n", __func__, __LINE__, dev->name);
         rc = register_netdev(dev);
         if (rc)
                 goto err_out;
