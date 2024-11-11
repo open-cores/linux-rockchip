@@ -223,6 +223,27 @@
 			default-state = "off";
 		};
 	};
+
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		autorepeat;
+
+                pinctrl-names = "default";
+                pinctrl-0 = <&rcover_key>;
+
+		button@0 {
+			gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_LOW>;
+			label = "reset";
+			linux,code = <0x101>;
+			linux,input-type = <1>;
+			gpio-key,wakeup = <1>;
+			debounce-interval = <100>;
+		};
+	
+	};
 };
 
 &cpu0 {
@@ -925,6 +946,10 @@
 			rockchip,pins = <3 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 
+
+		rcover_key: rcover-key {
+			rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
 
 		power_led_pin: power-led-pin {
 			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
