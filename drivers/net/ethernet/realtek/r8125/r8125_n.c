@@ -12813,6 +12813,34 @@ printk("rll: _%s_ %d 2 pdev-name is %s\n", __func__, __LINE__, dev->name);
 
         printk(KERN_INFO "%s: This product is covered by one or more of the following patents: US6,570,884, US6,115,776, and US6,327,625.\n", MODULENAME);
 
+		/*
+		 * Refer to RTL8125 datasheet 5.Customizable LED Configuration
+		 * Register Name	IO Address
+		 * LEDSEL0		0x18
+		 * LEDSEL2		0x84
+		 * LEDFEATURE		0x94
+		 *
+		 * LEDSEL Bit[]		Description
+		 * Bit0			Link10M
+		 * Bit1			Link100M
+		 * Bit3			Link1000M
+		 * Bit5			Link2.5G
+		 * Bit9			ACT
+		 * Bit10		preboot enable
+		 * Bit11		lp enable
+		 * Bit12		active low/high
+		 *
+		 * LEDFEATURE		Description
+		 * Bit0			LED Table V1/V2
+		 * Bit1~3		Reserved
+		 * Bit4~5		LED Blinking Duty Cycle	12.5%/ 25%/ 50%/ 75%
+		 * Bit6~7		LED Blinking Freq. 240ms/160ms/80ms/Link-Speed-Dependent
+                 *   LED0: active high, link on all speed
+                 *   LED2:  active low, act on all speed
+		 */
+         RTL_W16(tp, 0x18, 0x102b&0x1e2b);//LED0
+        RTL_W16(tp, 0x84, 0x0200&0x1e2b);//LED2
+
         rtl8125_disable_rxdvgate(dev);
 
         device_set_wakeup_enable(&pdev->dev, tp->wol_enabled);
